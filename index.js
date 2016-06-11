@@ -35,7 +35,7 @@ function getModelExample(isResponse, swagger, modelDefinition, depth){
     var definition = [];
 
     var properties = modelDefinition.properties;
-    
+
     for(var name in properties){
         var defaultValue = '""';
         if(properties[name]["$ref"]){
@@ -64,7 +64,8 @@ function findRefDefinition(refModelName, swagger){
 
 var app = {};
 app.getModelExample = function(modelName, swagger, isResponse){
-    return getModelExample(isResponse, swagger, modelName,0);
+    var definition = findRefDefinition(modelName, swagger);
+    return getModelExample(isResponse, swagger, definition ,0);
 };
 app.findRefDefinition = findRefDefinition;
 module.exports = app;

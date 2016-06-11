@@ -14,9 +14,7 @@ describe('Model Example', function() {
   });
 
   it('Should parse the Pet Definition', function() {
-      var definition = ModelExample.findRefDefinition("#/definitions/Pet", swagger);
-
-      var example = ModelExample.getModelExample(definition, swagger, true);
+      var example = ModelExample.getModelExample("#/definitions/Pet", swagger, true);
       console.log(example);
   });
 });
