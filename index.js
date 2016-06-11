@@ -1,41 +1,46 @@
 
+
 function getDefaultValue(type){
 
     switch (type) {
         case 'integer':
-            return 0;
-            break;
+        return 0;
+        break;
         case 'array':
-            return '[]';
-            break;
+        return '[]';
+        break;
         case 'boolean':
-            return 'true';
-            break;
+        return 'true';
+        break;
         case 'string':
-            return '""';
-            break;
+        return '""';
+        break;
         default:
-            return "{}";
+        return "{}";
 
     }
 }
 
-export.getModelDefinition = function(isResponse, swagger, modelName, depth){
-    if(typeof(modelName) === "undefined"){
-        return "";
-    }
-    var modelName = modelName.replace('#/definitions/','');
+function getModelExampleFromModelName(isResponse, swagger, modelName, depth){
+    var refDefinition = findRefDefinition(modelName, swagger);
+    return getModelExample(isResponse, swagger, refDefinition, depth + 1);
+}
+
+function getModelExample(isResponse, swagger, modelDefinition, depth){
+
     if(depth >1){
         return "{}";
     }
 
     var definition = [];
 
-    var properties = swagger.definitions[modelName].properties;
+    var properties = modelDefinition.properties;
+    
     for(var name in properties){
         var defaultValue = '""';
         if(properties[name]["$ref"]){
-            defaultValue = getModelDefinition(isResponse, swagger, properties[name]["$ref"], depth + 1);
+            var refDefinition = findRefDefinition(properties[name]["$ref"], swagger);
+            defaultValue = getModelExample(isResponse, swagger, refDefinition, depth + 1);
         }else{
             defaultValue = getDefaultValue(properties[name].type);
         }
@@ -46,4 +51,20 @@ export.getModelDefinition = function(isResponse, swagger, modelName, depth){
     }
 
     return JSON.stringify(JSON.parse("{" + definition.join(',') + "}"), null, "   ");
+}
+
+function findRefDefinition(refModelName, swagger){
+    if(typeof(refModelName) === "undefined"){
+        return {};
+    }
+    var modelName = refModelName.replace('#/definitions/','');
+    var properties = swagger.definitions[modelName];
+    return properties;
+}
+
+var app = {};
+app.getModelExample = function(modelName, swagger, isResponse){
+    return getModelExample(isResponse, swagger, modelName,0);
 };
+app.findRefDefinition = findRefDefinition;
+module.exports = app;
