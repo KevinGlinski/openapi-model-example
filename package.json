@@ -1,0 +1,22 @@
+{
+  "name": "openapi-model-example",
+  "version": "1.0.0",
+  "description": "Node Module to create example json payloads for the OpenAPI spec",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KevinGlinski/openapi-model-example.git"
+  },
+  "keywords": [
+    "openapi"
+  ],
+  "author": "Kevin Glinski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KevinGlinski/openapi-model-example/issues"
+  },
+  "homepage": "https://github.com/KevinGlinski/openapi-model-example#readme"
+}
