@@ -27,7 +27,6 @@ function getModelExampleFromModelName(isResponse, swagger, modelName, depth){
 }
 
 function getModelDescription(isResponse, swagger, definitions, modelName, depth){
-
     if(modelName == null || definitions[modelName] || depth >2){
         return definitions;
     }
@@ -45,11 +44,13 @@ function getModelDescription(isResponse, swagger, definitions, modelName, depth)
         return definitions;
     }
 
-    propertyDescriptions = [];
+    var propertyDescriptions = [];
 
-    for(var key in properties){
+    var keys = Object.keys(properties);
+    for(var x=0; x< keys.length; x++){
+        var key = keys[x];
         var property = properties[key];
-        if(isResponse && property.readonly != true){
+        if(isResponse || property.readOnly != true){
             propertyDescriptions.push(processPropertyDescription(isResponse,swagger, definitions, model,depth, key,property));
         }
     }
@@ -96,7 +97,7 @@ function processPropertyDescription(isResponse, swagger, definitions, model, dep
         description: description
     };
 
-    return definitions;
+    return propertyDefinition;
 }
 
 function getModelExample(isResponse, swagger, modelDefinition, depth){
@@ -135,21 +136,52 @@ function findRefDefinition(refModelName, swagger){
     return properties;
 }
 
+function convertDefinitions(definitions){
+
+    var arr = [];
+    for(var x=0; x < definitions.length; x++ ){
+        var definition = definitions[x];
+        //definition.name = keys[x];
+        arr.push(definition);
+    }
+    return arr;
+}
+
 var app = {};
 app.getModelExample = function(modelName, swagger, isResponse){
     var definition = findRefDefinition(modelName, swagger);
     return getModelExample(isResponse, swagger, definition ,0);
 };
 
+
 app.getModelDescription = function(modelName, swagger, isResponse){
     var descriptionHash = getModelDescription(isResponse, swagger, {}, modelName ,0);
-    console.log(descriptionHash);
     var descriptionArray = [];
 
-    for(var key in descriptionHash){
+
+
+    var keys = Object.keys(descriptionHash);
+
+    modelName = modelName.replace(/#\/definitions\//,'');
+
+    //make sure the parent object is first
+    descriptionArray.push({
+        name: modelName,
+        definitions: convertDefinitions(descriptionHash[modelName])
+    });
+
+    var index = keys.indexOf(modelName);
+    if (index > -1) {
+        keys.splice(index, 1);
+    }
+
+    for(var x=0; x < keys.length; x++ ){
+
+        var model = descriptionHash[keys[x]];
+
         descriptionArray.push({
-            name: key,
-            definitions: descriptionHash[key]
+            name: keys[x],
+            definitions: convertDefinitions(descriptionHash[keys[x]])
         });
     }
 
