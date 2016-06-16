@@ -18,3 +18,12 @@ describe('Model Example', function() {
       console.log(example);
   });
 });
+
+
+describe('Model Description', function() {
+
+  it('Should parse the Pet Definition', function() {
+      var example = ModelExample.getModelDescription("#/definitions/Pet", swagger, true);
+      console.log(example);
+  });
+});
