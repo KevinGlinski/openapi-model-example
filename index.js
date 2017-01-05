@@ -27,35 +27,40 @@ function getModelExampleFromModelName(isResponse, swagger, modelName, depth){
 }
 
 function getModelDescription(isResponse, swagger, definitions, modelName, depth){
-    if(modelName == null || definitions[modelName] || depth >2){
-        return definitions;
-    }
-
-    modelName = modelName.replace(/#\/definitions\//,'');
-
-    if(swagger["definitions"][modelName] == null){
-        return definitions;
-    }
-
-    var model = swagger["definitions"][modelName];
-    var properties = model["properties"];
-
-    if(properties == null){
-        return definitions;
-    }
-
-    var propertyDescriptions = [];
-
-    var keys = Object.keys(properties);
-    for(var x=0; x< keys.length; x++){
-        var key = keys[x];
-        var property = properties[key];
-        if(isResponse || property.readOnly != true){
-            propertyDescriptions.push(processPropertyDescription(isResponse,swagger, definitions, model,depth, key,property));
+    try{
+        if(modelName === null || definitions[modelName] || depth >2){
+            return definitions;
         }
+
+        modelName = modelName.replace(/#\/definitions\//,'');
+
+        if(swagger["definitions"][modelName] == null){
+            return definitions;
+        }
+
+        var model = swagger["definitions"][modelName];
+        var properties = model["properties"];
+
+        if(properties === null){
+            return definitions;
+        }
+
+        var propertyDescriptions = [];
+
+        var keys = Object.keys(properties);
+        for(var x=0; x< keys.length; x++){
+            var key = keys[x];
+            var property = properties[key];
+            if(isResponse || property.readOnly !== true){
+                propertyDescriptions.push(processPropertyDescription(isResponse,swagger, definitions, model,depth, key,property));
+            }
+        }
+
+        definitions[modelName] = propertyDescriptions
+    }catch(ex){
+        console.warn(ex);
     }
 
-    definitions[modelName] = propertyDescriptions
 
     return definitions;
 }
@@ -139,6 +144,11 @@ function findRefDefinition(refModelName, swagger){
 function convertDefinitions(definitions){
 
     var arr = [];
+
+    if(typeof definitions === 'undefined'){
+        return arr;
+    }
+
     for(var x=0; x < definitions.length; x++ ){
         var definition = definitions[x];
         //definition.name = keys[x];
