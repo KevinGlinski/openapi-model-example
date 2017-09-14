@@ -199,4 +199,5 @@ app.getModelDescription = function(modelName, swagger, isResponse){
 };
 
 app.findRefDefinition = findRefDefinition;
+app.getDefaultValue = getDefaultValue;
 module.exports = app;
