@@ -120,6 +120,9 @@ function getModelExample(isResponse, swagger, modelDefinition, depth){
         if(properties[name]["$ref"]){
             var refDefinition = findRefDefinition(properties[name]["$ref"], swagger);
             defaultValue = getModelExample(isResponse, swagger, refDefinition, depth + 1);
+        }else if(properties[name]["items"] && properties[name]["items"]["$ref"]){
+            var refDefinition = findRefDefinition(properties[name]["items"]["$ref"], swagger);
+            defaultValue = getModelExample(isResponse, swagger, refDefinition, depth + 1);
         }else{
             defaultValue = getDefaultValue(properties[name].type);
         }
