@@ -107,7 +107,7 @@ function processPropertyDescription(isResponse, swagger, definitions, model, dep
 
 function getModelExample(isResponse, swagger, modelDefinition, depth){
 
-    if(depth >1){
+    if(depth > 3){
         return "{}";
     }
 
