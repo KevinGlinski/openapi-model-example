@@ -112,6 +112,10 @@ function getModelExample(isResponse, swagger, modelDefinition, depth){
     }
 
     var definition = [];
+    
+    if(!modelDefinition){
+        return "{}";
+    }
 
     var properties = modelDefinition.properties;
 
